@@ -29,8 +29,9 @@ autenticación y gestión de usuarios.
 
 ## Historias de usuario cubiertas
 
-1. Como usuario quiero registrarme en el sistema indicando mis datos y mi
-   rol, validando que la información sea correcta.
+1. Como administrador quiero registrar nuevos usuarios asignándoles un rol,
+   validando que los datos ingresados sean correctos, para controlar el
+   acceso al sistema.
 2. Como usuario quiero iniciar sesión con mi usuario y contraseña para
    acceder al sistema según mi rol.
 3. Como administrador quiero ver el listado de usuarios y poder activar o
@@ -90,7 +91,41 @@ evidencia:
 5. Controladores y vistas del módulo de autenticación.
 6. Pruebas unitarias del servicio de usuarios.
 
-## Próximos módulos (fuera del alcance de esta evidencia)
+## Alcance de esta evidencia
 
-- Módulo de inventario (productos, categorías, stock).
-- Módulo de facturación (clientes, facturas, detalle de factura).
+Esta entrega corresponde únicamente a la codificación del **módulo de
+autenticación y gestión de usuarios** de DigiStock. DigiStock, como sistema
+completo, contempla además un módulo de inventario (productos, categorías,
+stock) y un módulo de facturación (clientes, facturas, detalle de factura),
+los cuales se apoyarán en los roles y usuarios definidos aquí, pero no forman
+parte del código entregado en esta evidencia.
+
+## Decisiones de diseño
+
+- Se separó la lógica de negocio en una capa de **servicio**
+  (`UsuarioService`) independiente del controlador, para mantener el
+  controlador enfocado solo en manejar peticiones HTTP y facilitar las
+  pruebas unitarias con mocks.
+- La validación de los datos del formulario se hace en dos niveles:
+  Bean Validation (`@NotBlank`, `@Size`, `@Pattern`, `@Email`) en el DTO
+  para errores de formato, y validaciones de negocio (usuario/correo
+  duplicado) en el servicio.
+- Las cuentas no se eliminan físicamente; se desactivan (`activo = false`)
+  para conservar el historial y evitar inconsistencias con datos
+  relacionados en los módulos futuros de facturación e inventario.
+
+## Limitaciones conocidas
+
+- El formulario de registro (`/registro`) es público y permite elegir
+  cualquier rol, incluido `ADMINISTRADOR`. Esto se dejó así
+  intencionalmente para poder crear el primer usuario administrador sin
+  depender de datos precargados en MongoDB; en un entorno de producción
+  este registro se restringiría o se movería detrás de una pantalla
+  exclusiva para administradores.
+- Los índices únicos declarados en `Usuario` (`nombreUsuario`, `correo`)
+  dependen de que `spring.data.mongodb.auto-index-creation=true` esté
+  habilitado; de lo contrario, la unicidad solo queda garantizada por la
+  validación manual en `UsuarioService`.
+- No se incluyen pruebas de integración de los controladores ni de la
+  configuración de seguridad; las pruebas actuales cubren únicamente la
+  lógica de negocio del servicio de usuarios.
