@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>DigiStock - Usuarios</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <div class="contenedor-ancho">
+        <h1>Usuarios del sistema</h1>
+        <a class="enlace" th:href="@{/dashboard}">&larr; Volver al panel</a>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Correo</th>
+                    <th>Nombre completo</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Accion</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="u : ${usuarios}">
+                    <td th:text="${u.nombreUsuario}"></td>
+                    <td th:text="${u.correo}"></td>
+                    <td th:text="${u.nombreCompleto}"></td>
+                    <td th:text="${u.rol}"></td>
+                    <td th:text="${u.activo} ? 'Activo' : 'Inactivo'"></td>
+                    <td>
+                        <form th:action="@{'/usuarios/' + ${u.id} + '/estado'}" method="post">
+                            <input type="hidden" name="activo" th:value="${!u.activo}"/>
+                            <button type="submit" th:text="${u.activo} ? 'Desactivar' : 'Activar'"></button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

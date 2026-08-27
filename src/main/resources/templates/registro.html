@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>DigiStock - Registro de usuario</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <div class="contenedor">
+        <h1>Crear cuenta</h1>
+
+        <div class="mensaje-error" th:if="${errorNegocio}" th:text="${errorNegocio}"></div>
+
+        <form th:action="@{/registro}" th:object="${registroUsuarioDTO}" method="post">
+
+            <label for="nombreUsuario">Nombre de usuario</label>
+            <input type="text" id="nombreUsuario" th:field="*{nombreUsuario}"/>
+            <div class="error" th:if="${#fields.hasErrors('nombreUsuario')}" th:errors="*{nombreUsuario}"></div>
+
+            <label for="correo">Correo electronico</label>
+            <input type="email" id="correo" th:field="*{correo}"/>
+            <div class="error" th:if="${#fields.hasErrors('correo')}" th:errors="*{correo}"></div>
+
+            <label for="nombreCompleto">Nombre completo</label>
+            <input type="text" id="nombreCompleto" th:field="*{nombreCompleto}"/>
+            <div class="error" th:if="${#fields.hasErrors('nombreCompleto')}" th:errors="*{nombreCompleto}"></div>
+
+            <label for="contrasena">Contrasena</label>
+            <input type="password" id="contrasena" th:field="*{contrasena}"/>
+            <div class="error" th:if="${#fields.hasErrors('contrasena')}" th:errors="*{contrasena}"></div>
+
+            <label for="rol">Rol</label>
+            <select id="rol" th:field="*{rol}">
+                <option value="">-- Seleccione un rol --</option>
+                <option th:each="r : ${roles}" th:value="${r}" th:text="${r}"></option>
+            </select>
+            <div class="error" th:if="${#fields.hasErrors('rol')}" th:errors="*{rol}"></div>
+
+            <button type="submit">Registrarme</button>
+        </form>
+
+        <a class="enlace" th:href="@{/login}">Ya tengo una cuenta</a>
+    </div>
+</body>
+</html>

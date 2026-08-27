@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>DigiStock - Iniciar sesion</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <div class="contenedor">
+        <h1>DigiStock</h1>
+        <p>Sistema de facturacion e inventario</p>
+
+        <!-- Mensajes de estado segun parametros de la URL -->
+        <div class="mensaje-error" th:if="${param.error}">
+            Usuario o contrasena incorrectos.
+        </div>
+        <div class="mensaje-exito" th:if="${param.registrado}">
+            Cuenta creada correctamente. Ya puedes iniciar sesion.
+        </div>
+        <div class="mensaje-exito" th:if="${param.logout}">
+            Sesion cerrada correctamente.
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            <label for="username">Usuario</label>
+            <input type="text" id="username" name="username" required maxlength="20"/>
+
+            <label for="password">Contrasena</label>
+            <input type="password" id="password" name="password" required maxlength="30"/>
+
+            <button type="submit">Ingresar</button>
+        </form>
+
+        <a class="enlace" th:href="@{/registro}">¿No tienes cuenta? Registrate aqui</a>
+    </div>
+</body>
+</html>

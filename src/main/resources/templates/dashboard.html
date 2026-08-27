@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>DigiStock - Panel principal</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <div class="contenedor-ancho">
+        <h1>Bienvenido, <span th:text="${usuario.nombreCompleto}"></span></h1>
+        <p>Rol: <strong th:text="${usuario.rol}"></strong></p>
+
+        <ul>
+            <li>Modulo de facturacion (proximo desarrollo)</li>
+            <li>Modulo de inventario (proximo desarrollo)</li>
+            <!-- Este enlace solo se muestra si el usuario autenticado es ADMINISTRADOR -->
+            <li sec:authorize="hasRole('ADMINISTRADOR')">
+                <a th:href="@{/usuarios}">Gestionar usuarios</a>
+            </li>
+        </ul>
+
+        <form th:action="@{/logout}" method="post">
+            <button type="submit">Cerrar sesion</button>
+        </form>
+    </div>
+</body>
+</html>
