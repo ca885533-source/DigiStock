@@ -36,6 +36,8 @@ public class SecurityConfig {
                 .requestMatchers("/login", "/registro", "/css/**", "/js/**").permitAll()
                 // Solo el administrador puede gestionar usuarios
                 .requestMatchers("/usuarios/**").hasRole("ADMINISTRADOR")
+                // Facturacion: la usan tanto el administrador como el vendedor
+                .requestMatchers("/facturas/**").hasAnyRole("ADMINISTRADOR", "VENDEDOR")
                 // El resto de rutas del sistema requieren estar autenticado
                 .anyRequest().authenticated()
             )
