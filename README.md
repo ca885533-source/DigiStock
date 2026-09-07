@@ -129,3 +129,85 @@ parte del código entregado en esta evidencia.
 - No se incluyen pruebas de integración de los controladores ni de la
   configuración de seguridad; las pruebas actuales cubren únicamente la
   lógica de negocio del servicio de usuarios.
+
+---
+
+## Evidencia GA7-220501096-AA4-EV03 — Módulo de facturación (front-end)
+
+Continuación del proyecto: codificación del **módulo de facturación/ventas**,
+construido sobre la base de autenticación y roles ya existente.
+
+### Funcionalidad codificada
+
+- Listado de facturas generadas (`/facturas`), ordenadas de la más reciente
+  a la más antigua, con indicador visual (insignia) de estado.
+- Formulario de creación de factura (`/facturas/nueva`) con líneas de
+  producto agregadas dinámicamente mediante JavaScript (agregar/quitar
+  producto) y cálculo de subtotal, IVA (19%) y total en tiempo real en el
+  navegador.
+- Registro de la venta (`POST /facturas`): valida stock disponible,
+  calcula los totales con el precio real guardado en base de datos
+  (nunca con el valor recibido del formulario) y descuenta el stock
+  vendido del inventario.
+- Vista de detalle/comprobante de factura (`/facturas/{id}`), con opción
+  de impresión y de anulación (solo si la factura sigue en estado
+  `PAGADA`); anular reintegra el stock de cada producto.
+- Acceso restringido por rol: `/facturas/**` solo para `ADMINISTRADOR` y
+  `VENDEDOR` (configurado en `SecurityConfig`).
+- Catálogo mínimo de productos (`Producto`) con datos de ejemplo
+  precargados (`DatosIniciales`), como soporte temporal mientras se
+  desarrolla el módulo de inventario completo en otra evidencia.
+
+### Historias de usuario cubiertas
+
+- Como vendedor quiero registrar una venta seleccionando productos y
+  cantidades, para generar una factura con el total a cobrar.
+- Como vendedor quiero consultar el historial de facturas generadas,
+  para hacer seguimiento a mis ventas.
+- Como administrador quiero poder anular una factura errónea, para que
+  el inventario y los reportes queden correctos.
+
+### Estándares de codificación aplicados
+
+- Convención de nombres Java: clases en PascalCase, atributos y métodos
+  en camelCase, paquetes en minúscula.
+- Arquitectura en capas (Controller → Service → Repository → Model),
+  igual que en el módulo de usuarios.
+- DTOs con Bean Validation (`@NotBlank`, `@NotEmpty`, `@Valid`) separados
+  de las entidades de persistencia.
+- Comentarios Javadoc en todas las clases y métodos públicos, explicando
+  el propósito y las decisiones de diseño relevantes.
+- El precio y el stock de un producto se leen siempre desde la base de
+  datos en el servidor; el formulario solo envía el id del producto y la
+  cantidad, evitando que un valor manipulado en el navegador afecte el
+  cobro real.
+
+### Control de versiones — commits de esta evidencia
+
+1. `feat: entidades Factura, ItemFactura, Producto y enum EstadoFactura`
+2. `feat: repositorios de Producto y Factura`
+3. `feat: DTOs del formulario de creacion de factura con validaciones`
+4. `feat: logica de negocio de facturacion (calculo IVA, control de stock, anulacion)`
+5. `feat: controlador del modulo de facturacion y permisos por rol`
+6. `feat: vistas Thymeleaf del modulo de facturacion (listado, formulario dinamico y comprobante)`
+7. `test: pruebas unitarias del servicio de facturacion (IVA, stock, anulacion)`
+
+### Pruebas unitarias
+
+En `src/test/java/com/digistock/app/FacturaServiceTest.java`, cubren:
+
+- Cálculo correcto de subtotal, IVA y total.
+- Descuento del stock vendido al crear una factura.
+- Rechazo de la venta cuando no hay stock suficiente.
+- Reintegro del stock al anular una factura.
+
+### Limitaciones conocidas de esta evidencia
+
+- El número de factura (`FAC-000001`, `FAC-000002`, ...) se genera contando
+  los documentos existentes; en un escenario con varios vendedores
+  facturando al mismo tiempo se recomendaría un contador atómico en
+  MongoDB para evitar duplicados.
+- El módulo de inventario completo (CRUD de productos, categorías,
+  proveedores) no forma parte de esta evidencia; `Producto` se dejó con
+  los campos mínimos para que la facturación pueda seleccionar productos
+  y descontar stock.
