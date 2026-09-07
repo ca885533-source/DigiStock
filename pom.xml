@@ -50,6 +50,13 @@
             <artifactId>thymeleaf-extras-springsecurity6</artifactId>
         </dependency>
 
+        <!-- Soporte del objeto #temporals en Thymeleaf, usado para formatear
+             fechas LocalDateTime en las vistas del modulo de facturacion -->
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-java8time</artifactId>
+        </dependency>
+
         <!-- Validaciones de formularios (Bean Validation) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

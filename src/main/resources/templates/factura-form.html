@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>DigiStock - Nueva factura</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <div class="contenedor-ancho">
+        <h1>Nueva factura</h1>
+        <a class="enlace" th:href="@{/facturas}">&larr; Volver a facturas</a>
+
+        <!-- Error de negocio (ej: stock insuficiente) devuelto por el servidor -->
+        <div class="mensaje-error" th:if="${errorNegocio}" th:text="${errorNegocio}"></div>
+
+        <form th:action="@{/facturas}" th:object="${facturaDTO}" method="post" id="form-factura">
+
+            <label for="nombreCliente">Nombre del cliente</label>
+            <input type="text" id="nombreCliente" th:field="*{nombreCliente}">
+            <span class="error" th:if="${#fields.hasErrors('nombreCliente')}" th:errors="*{nombreCliente}"></span>
+
+            <label for="documentoCliente">Documento del cliente</label>
+            <input type="text" id="documentoCliente" th:field="*{documentoCliente}">
+            <span class="error" th:if="${#fields.hasErrors('documentoCliente')}" th:errors="*{documentoCliente}"></span>
+
+            <h2>Productos</h2>
+            <span class="error" th:if="${#fields.hasErrors('items')}" th:errors="*{items}"></span>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Subtotal</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <!-- Las filas de producto se generan dinamicamente con JavaScript -->
+                <tbody id="cuerpo-items"></tbody>
+            </table>
+
+            <button type="button" id="btn-agregar">+ Agregar producto</button>
+
+            <!-- Resumen calculado en el navegador solo para que el vendedor vea
+                 una vista previa; el servidor vuelve a calcular todo con los
+                 precios reales antes de guardar la factura. -->
+            <div class="resumen-factura">
+                <p>Subtotal: <span id="txt-subtotal">$0</span></p>
+                <p>IVA (19%): <span id="txt-iva">$0</span></p>
+                <p><strong>Total: <span id="txt-total">$0</span></strong></p>
+            </div>
+
+            <button type="submit">Generar factura</button>
+        </form>
+    </div>
+
+    <!-- Catalogo de productos disponible, enviado desde el servidor como JSON
+         para construir las listas desplegables sin recargar la pagina. -->
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const productos = /*[[${productos}]]*/ [];
+        /*]]>*/
+
+        let contadorFilas = 0;
+
+        /** Formatea un numero como pesos colombianos redondeados. */
+        function formatearMoneda(valor) {
+            return '$' + Math.round(valor).toLocaleString('es-CO');
+        }
+
+        /** Agrega una nueva fila de producto a la tabla de la factura. */
+        function agregarFila() {
+            const indice = contadorFilas++;
+            const fila = document.createElement('tr');
+            fila.dataset.indice = indice;
+
+            let opciones = '<option value="">-- Seleccione --</option>';
+            productos.forEach(p => {
+                opciones += `<option value="${p.id}" data-precio="${p.precio}" data-stock="${p.stockDisponible}">`
+                          + `${p.nombre} (stock: ${p.stockDisponible}) - ${formatearMoneda(p.precio)}</option>`;
+            });
+
+            fila.innerHTML = `
+                <td>
+                    <select name="items[${indice}].productoId" class="select-producto" onchange="recalcular()">
+                        ${opciones}
+                    </select>
+                </td>
+                <td>
+                    <input type="number" name="items[${indice}].cantidad" class="input-cantidad"
+                           min="1" value="1" onchange="recalcular()">
+                </td>
+                <td class="celda-subtotal">$0</td>
+                <td><button type="button" onclick="quitarFila(this)">Quitar</button></td>
+            `;
+
+            document.getElementById('cuerpo-items').appendChild(fila);
+        }
+
+        /** Elimina la fila del producto y vuelve a calcular el total. */
+        function quitarFila(boton) {
+            boton.closest('tr').remove();
+            recalcular();
+        }
+
+        /** Recalcula subtotal, IVA y total en pantalla segun las filas actuales. */
+        function recalcular() {
+            let subtotal = 0;
+
+            document.querySelectorAll('#cuerpo-items tr').forEach(fila => {
+                const select = fila.querySelector('.select-producto');
+                const cantidadInput = fila.querySelector('.input-cantidad');
+                const opcion = select.options[select.selectedIndex];
+
+                const precio = opcion && opcion.dataset.precio ? parseFloat(opcion.dataset.precio) : 0;
+                const cantidad = parseInt(cantidadInput.value, 10) || 0;
+                const subtotalFila = precio * cantidad;
+
+                fila.querySelector('.celda-subtotal').textContent = formatearMoneda(subtotalFila);
+                subtotal += subtotalFila;
+            });
+
+            const iva = subtotal * 0.19;
+            document.getElementById('txt-subtotal').textContent = formatearMoneda(subtotal);
+            document.getElementById('txt-iva').textContent = formatearMoneda(iva);
+            document.getElementById('txt-total').textContent = formatearMoneda(subtotal + iva);
+        }
+
+        document.getElementById('btn-agregar').addEventListener('click', agregarFila);
+
+        // Al cargar la pagina siempre se muestra una primera fila lista para usar
+        agregarFila();
+    </script>
+</body>
+</html>

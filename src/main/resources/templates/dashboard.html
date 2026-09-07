@@ -11,7 +11,7 @@
         <p>Rol: <strong th:text="${usuario.rol}"></strong></p>
 
         <ul>
-            <li>Modulo de facturacion (proximo desarrollo)</li>
+            <li><a th:href="@{/facturas}">Modulo de facturacion</a></li>
             <li>Modulo de inventario (proximo desarrollo)</li>
             <!-- Este enlace solo se muestra si el usuario autenticado es ADMINISTRADOR -->
             <li sec:authorize="hasRole('ADMINISTRADOR')">

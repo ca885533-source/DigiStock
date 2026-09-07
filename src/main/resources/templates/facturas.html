@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>DigiStock - Facturas</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <div class="contenedor-ancho">
+        <h1>Facturacion</h1>
+        <a class="enlace" th:href="@{/dashboard}">&larr; Volver al panel</a>
+
+        <a th:href="@{/facturas/nueva}">
+            <button type="button">+ Nueva factura</button>
+        </a>
+
+        <!-- Mensaje cuando aun no hay ninguna venta registrada -->
+        <p th:if="${#lists.isEmpty(facturas)}">Todavia no hay facturas registradas.</p>
+
+        <table th:unless="${#lists.isEmpty(facturas)}">
+            <thead>
+                <tr>
+                    <th>Numero</th>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Vendedor</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                    <th>Accion</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="f : ${facturas}">
+                    <td th:text="${f.numeroFactura}"></td>
+                    <td th:text="${#temporals.format(f.fecha, 'dd/MM/yyyy HH:mm')}"></td>
+                    <td th:text="${f.nombreCliente}"></td>
+                    <td th:text="${f.vendedor}"></td>
+                    <td th:text="${'$' + #numbers.formatDecimal(f.total, 0, 'POINT', 0, 'COMMA')}"></td>
+                    <td>
+                        <!-- Insignia de color segun el estado de la factura -->
+                        <span th:class="${f.estado.name() == 'PAGADA'} ? 'badge badge-exito' : 'badge badge-anulada'"
+                              th:text="${f.estado}"></span>
+                    </td>
+                    <td>
+                        <a class="enlace" th:href="@{'/facturas/' + ${f.id}}">Ver</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

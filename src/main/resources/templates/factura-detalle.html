@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>DigiStock - Factura <span th:text="${factura.numeroFactura}"></span></title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <div class="contenedor-ancho" id="comprobante">
+        <a class="enlace no-imprimir" th:href="@{/facturas}">&larr; Volver a facturas</a>
+
+        <h1>Factura <span th:text="${factura.numeroFactura}"></span></h1>
+        <span th:class="${factura.estado.name() == 'PAGADA'} ? 'badge badge-exito' : 'badge badge-anulada'"
+              th:text="${factura.estado}"></span>
+
+        <p><strong>Fecha:</strong> <span th:text="${#temporals.format(factura.fecha, 'dd/MM/yyyy HH:mm')}"></span></p>
+        <p><strong>Cliente:</strong> <span th:text="${factura.nombreCliente}"></span>
+           (<span th:text="${factura.documentoCliente}"></span>)</p>
+        <p><strong>Vendedor:</strong> <span th:text="${factura.vendedor}"></span></p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio unitario</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item : ${factura.items}">
+                    <td th:text="${item.nombreProducto}"></td>
+                    <td th:text="${item.cantidad}"></td>
+                    <td th:text="${'$' + #numbers.formatDecimal(item.precioUnitario, 0, 'POINT', 0, 'COMMA')}"></td>
+                    <td th:text="${'$' + #numbers.formatDecimal(item.subtotal, 0, 'POINT', 0, 'COMMA')}"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="resumen-factura">
+            <p>Subtotal: <span th:text="${'$' + #numbers.formatDecimal(factura.subtotal, 0, 'POINT', 0, 'COMMA')}"></span></p>
+            <p>IVA (19%): <span th:text="${'$' + #numbers.formatDecimal(factura.iva, 0, 'POINT', 0, 'COMMA')}"></span></p>
+            <p><strong>Total: <span th:text="${'$' + #numbers.formatDecimal(factura.total, 0, 'POINT', 0, 'COMMA')}"></span></strong></p>
+        </div>
+
+        <div class="no-imprimir">
+            <button type="button" onclick="window.print()">Imprimir</button>
+
+            <!-- Solo se puede anular una factura que todavia este pagada -->
+            <form th:if="${factura.estado.name() == 'PAGADA'}"
+                  th:action="@{'/facturas/' + ${factura.id} + '/anular'}" method="post"
+                  onsubmit="return confirm('¿Seguro que desea anular esta factura? Se reintegrara el stock.');">
+                <button type="submit" class="boton-peligro">Anular factura</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

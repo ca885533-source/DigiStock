@@ -110,3 +110,51 @@ th {
     text-decoration: none;
     font-size: 14px;
 }
+
+/* --- Estilos del modulo de facturacion --- */
+
+/* Insignias de estado de la factura (PAGADA / ANULADA) */
+.badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-exito {
+    background-color: #e6f4ea;
+    color: #1e7e34;
+}
+
+.badge-anulada {
+    background-color: #fdecea;
+    color: #b00020;
+}
+
+.resumen-factura {
+    margin-top: 16px;
+    padding: 16px;
+    background-color: #f4f6f8;
+    border-radius: 6px;
+    text-align: right;
+}
+
+.resumen-factura p {
+    margin: 4px 0;
+}
+
+.boton-peligro {
+    background-color: #b00020;
+}
+
+.boton-peligro:hover {
+    background-color: #8a0018;
+}
+
+/* Oculta botones y enlaces de accion al imprimir el comprobante de factura */
+@media print {
+    .no-imprimir {
+        display: none;
+    }
+}
