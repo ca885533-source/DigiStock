@@ -3,6 +3,7 @@ package com.digistock.app.config;
 import com.digistock.app.model.Producto;
 import com.digistock.app.repository.ProductoRepository;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -18,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class DatosIniciales {
 
-    @org.springframework.context.annotation.Bean
+    @Bean
     public CommandLineRunner cargarProductosDemo(ProductoRepository productoRepository) {
         return args -> {
             if (productoRepository.count() == 0) {
