@@ -66,4 +66,35 @@ public class UsuarioService {
         usuario.setActivo(activo);
         usuarioRepository.save(usuario);
     }
+
+    /**
+     * Autentica un usuario para la API REST (usada por AuthRestController).
+     *
+     * A diferencia del login por formulario (que lo maneja Spring Security
+     * automaticamente), este metodo se usa cuando el cliente es una API
+     * externa (por ejemplo, probada con Postman) y necesita una respuesta
+     * JSON explicita de exito o error en la autenticacion.
+     *
+     * @param nombreUsuario nombre de usuario enviado en la peticion
+     * @param contrasena contrasena en texto plano enviada en la peticion
+     * @return el usuario autenticado, si las credenciales son correctas
+     * @throws IllegalArgumentException si el usuario no existe, esta
+     *         inactivo, o la contrasena no coincide (error de autenticacion)
+     */
+    public Usuario autenticar(String nombreUsuario, String contrasena) {
+        Usuario usuario = usuarioRepository.findByNombreUsuario(nombreUsuario)
+                .orElseThrow(() -> new IllegalArgumentException("Error en la autenticacion"));
+
+        if (!usuario.isActivo()) {
+            throw new IllegalArgumentException("Error en la autenticacion");
+        }
+
+        // Se compara la contrasena en texto plano recibida contra el hash
+        // BCrypt guardado; BCrypt nunca se "desencripta", solo se compara.
+        if (!passwordEncoder.matches(contrasena, usuario.getContrasena())) {
+            throw new IllegalArgumentException("Error en la autenticacion");
+        }
+
+        return usuario;
+    }
 }

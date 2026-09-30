@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${esNuevo} ? 'DigiStock - Nuevo producto' : 'DigiStock - Editar producto'"></title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <div class="contenedor-ancho">
+        <h1 th:text="${esNuevo} ? 'Nuevo producto' : 'Editar producto'"></h1>
+        <a class="enlace" th:href="@{/productos}">&larr; Volver al inventario</a>
+
+        <!-- La misma accion sirve para crear (POST /productos) y para editar
+             (POST /productos/{id}), segun el valor de esNuevo -->
+        <form th:action="${esNuevo} ? @{/productos} : @{'/productos/' + ${producto.id}}"
+              th:object="${producto}" method="post">
+
+            <label for="nombre">Nombre del producto</label>
+            <input type="text" id="nombre" th:field="*{nombre}">
+            <span class="error" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></span>
+
+            <label for="precio">Precio unitario (sin IVA)</label>
+            <input type="number" step="0.01" id="precio" th:field="*{precio}">
+            <span class="error" th:if="${#fields.hasErrors('precio')}" th:errors="*{precio}"></span>
+
+            <label for="stockDisponible">Stock disponible</label>
+            <input type="number" id="stockDisponible" th:field="*{stockDisponible}">
+            <span class="error" th:if="${#fields.hasErrors('stockDisponible')}" th:errors="*{stockDisponible}"></span>
+
+            <button type="submit" th:text="${esNuevo} ? 'Guardar producto' : 'Guardar cambios'"></button>
+        </form>
+    </div>
+</body>
+</html>
