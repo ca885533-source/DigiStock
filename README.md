@@ -211,3 +211,44 @@ En `src/test/java/com/digistock/app/FacturaServiceTest.java`, cubren:
   proveedores) no forma parte de esta evidencia; `Producto` se dejó con
   los campos mínimos para que la facturación pueda seleccionar productos
   y descontar stock.
+
+## Evidencia GA7-220501096-AA5-EV03 — Servicios web (API REST)
+
+Además de la interfaz web, DigiStock expone una API REST (JSON) para autenticación, inventario y facturación. La documentación completa de cada servicio (campos, validaciones, ejemplos y respuestas) está en `docs/Documentacion_Servicios_API_DigiStock.pdf`.
+
+**URL base:** `http://localhost:8080` · **Formato:** `application/json` · **Seguridad:** las rutas `/api/**` son públicas (pensadas para pruebas con Postman); las contraseñas se guardan cifradas con BCrypt.
+
+### Servicios
+
+| N.º | Método | Endpoint | Función | Respuestas |
+|---|---|---|---|---|
+| 1 | POST | `/api/auth/registro` | Registrar un usuario | 200, 400 |
+| 2 | POST | `/api/auth/login` | Iniciar sesión | 200, 400 |
+| 3 | GET | `/api/productos` | Listar productos | 200 |
+| 4 | GET | `/api/productos/{id}` | Consultar un producto | 200, 404 |
+| 5 | POST | `/api/productos` | Crear un producto | 201, 400 |
+| 6 | PUT | `/api/productos/{id}` | Actualizar un producto | 200, 400, 404 |
+| 7 | DELETE | `/api/productos/{id}` | Eliminar un producto | 200, 404 |
+| 8 | GET | `/api/facturas` | Listar facturas | 200 |
+| 9 | GET | `/api/facturas/{id}` | Consultar una factura | 200, 404 |
+| 10 | POST | `/api/facturas` | Crear factura (venta con IVA 19 %) | 201, 400 |
+| 11 | POST | `/api/facturas/{id}/anular` | Anular factura y reintegrar stock | 200, 404 |
+
+### Ejemplo: crear una factura
+
+```http
+POST /api/facturas
+Content-Type: application/json
+
+{
+  "nombreCliente": "Carlos Perez",
+  "documentoCliente": "1234567890",
+  "items": [ { "productoId": "<id del producto>", "cantidad": 2 } ]
+}
+```
+
+Respuesta `201 Created`: la factura con `numeroFactura` (FAC-000001...), `subtotal`, `iva`, `total` y `estado: "PAGADA"`.
+
+### Pruebas con Postman
+
+Importar `DigiStock_AA5-EV04.postman_collection.json` y ejecutarla con *Run collection*. Cada petición valida el código de estado y el contenido de la respuesta.
