@@ -212,6 +212,21 @@ En `src/test/java/com/digistock/app/FacturaServiceTest.java`, cubren:
   los campos mínimos para que la facturación pueda seleccionar productos
   y descontar stock.
 
+## Módulo de inventario (productos)
+
+Gestión de los productos que se venden en las facturas, con pantallas web
+y API REST.
+
+- Listado, creación, edición y eliminación de productos (`/productos`).
+- Cada producto guarda nombre, precio y stock disponible (colección `productos`).
+- Permisos por rol: ver productos lo pueden hacer `ADMINISTRADOR`, `VENDEDOR`
+  y `ALMACENISTA`; crear, editar y eliminar, solo `ADMINISTRADOR` y `ALMACENISTA`.
+- El stock se descuenta al facturar y se reintegra al anular una factura.
+- La versión API de este módulo está en los servicios 3 a 7 de la sección siguiente.
+
+> Nota: las menciones anteriores a que el inventario "no forma parte de esta
+> evidencia" corresponden a AA3 y AA4; en AA5 el módulo ya está implementado.
+
 ## Evidencia GA7-220501096-AA5-EV03 — Servicios web (API REST)
 
 Además de la interfaz web, DigiStock expone una API REST (JSON) para autenticación, inventario y facturación. La documentación completa de cada servicio (campos, validaciones, ejemplos y respuestas) está en `docs/Documentacion_Servicios_API_DigiStock.pdf`.
