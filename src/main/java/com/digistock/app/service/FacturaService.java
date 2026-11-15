@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Servicio que contiene la logica de negocio del modulo de facturacion.
@@ -102,6 +103,7 @@ public class FacturaService {
         factura.setIva(iva);
         factura.setTotal(subtotal + iva);
         factura.setEstado(EstadoFactura.PAGADA);
+        factura.setCufe(CufeGenerador.generar(factura));
 
         return facturaRepository.save(factura);
     }
@@ -115,6 +117,24 @@ public class FacturaService {
     public Factura buscarPorId(String id) {
         return facturaRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Factura no encontrada"));
+    }
+
+    /** Busca una factura por su CUFE (para la pagina publica de verificacion). */
+    public Optional<Factura> buscarPorCufe(String cufe) {
+        return facturaRepository.findByCufe(cufe);
+    }
+
+    /**
+     * Garantiza que la factura tenga CUFE. Las facturas creadas antes de
+     * incorporar la facturacion electronica no lo tienen, asi que se les
+     * genera y se guarda la primera vez que se consultan.
+     */
+    public Factura asegurarCufe(Factura factura) {
+        if (factura.getCufe() == null || factura.getCufe().isBlank()) {
+            factura.setCufe(CufeGenerador.generar(factura));
+            return facturaRepository.save(factura);
+        }
+        return factura;
     }
 
     /**

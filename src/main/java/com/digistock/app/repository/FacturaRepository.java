@@ -4,6 +4,7 @@ import com.digistock.app.model.Factura;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repositorio de acceso a datos para la coleccion "facturas" en MongoDB.
@@ -16,4 +17,7 @@ public interface FacturaRepository extends MongoRepository<Factura, String> {
 
     /** Lista las facturas ordenadas de la mas reciente a la mas antigua. */
     List<Factura> findAllByOrderByFechaDesc();
+
+    /** Busca una factura por su codigo CUFE (usado por la verificacion publica). */
+    Optional<Factura> findByCufe(String cufe);
 }

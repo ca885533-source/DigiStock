@@ -59,4 +59,10 @@ public class Factura {
 
     /** Estado actual de la factura (ver enum EstadoFactura). */
     private EstadoFactura estado = EstadoFactura.PAGADA;
+
+    /**
+     * Codigo unico de la factura (CUFE simulado): hash SHA-384 de sus datos
+     * principales. Es el que viaja dentro del codigo QR para verificarla.
+     */
+    private String cufe;
 }
