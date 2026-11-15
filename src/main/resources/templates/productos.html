@@ -2,10 +2,13 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>DigiStock - Inventario</title>
     <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
 <body>
+    <div th:replace="~{fragments/cabecera :: cabecera}"></div>
+
     <div class="contenedor-ancho">
         <h1>Inventario de productos</h1>
         <a class="enlace" th:href="@{/dashboard}">&larr; Volver al panel</a>
@@ -41,7 +44,7 @@
                     <td sec:authorize="hasAnyRole('ADMINISTRADOR','ALMACENISTA')">
                         <a class="enlace" th:href="@{'/productos/' + ${p.id} + '/editar'}">Editar</a>
                         <form th:action="@{'/productos/' + ${p.id} + '/eliminar'}" method="post" style="display:inline">
-                            <button type="submit">Eliminar</button>
+                            <button type="submit" class="boton-peligro">Eliminar</button>
                         </form>
                     </td>
                 </tr>

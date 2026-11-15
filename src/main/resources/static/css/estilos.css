@@ -1,160 +1,302 @@
-/* Estilos generales del sistema DigiStock */
+/* Estilos generales del sistema DigiStock - tema colorido */
 
-body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background-color: #f4f6f8;
-    margin: 0;
-    padding: 0;
-    color: #222;
+:root {
+    --violeta: #6C4DF6;
+    --violeta-oscuro: #5237d4;
+    --turquesa: #00B8A9;
+    --coral: #FF7A59;
+    --amarillo: #FFC857;
+    --oscuro: #2B2D42;
+    --gris: #6b7085;
+    --fondo: #f3f1ff;
+    --borde: #e3def9;
 }
 
+* { box-sizing: border-box; }
+
+body {
+    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+    background: linear-gradient(160deg, #f3f1ff 0%, #e6fbf8 100%);
+    background-attachment: fixed;
+    margin: 0;
+    padding: 0;
+    color: var(--oscuro);
+    min-height: 100vh;
+}
+
+/* ---------- Barra superior con logo ---------- */
+.cabecera {
+    background: linear-gradient(90deg, var(--violeta), var(--turquesa));
+    color: #fff;
+    padding: 10px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 14px rgba(108, 77, 246, 0.25);
+}
+.cabecera .marca {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #fff;
+    text-decoration: none;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: .3px;
+}
+.cabecera .marca img { width: 38px; height: 38px; }
+.cabecera .navegacion a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    background: rgba(255, 255, 255, 0.18);
+    padding: 8px 14px;
+    border-radius: 20px;
+    margin-left: 8px;
+}
+.cabecera .navegacion a:hover { background: rgba(255, 255, 255, 0.32); }
+
+/* ---------- Contenedores (tarjetas) ---------- */
 .contenedor {
-    max-width: 420px;
-    margin: 80px auto;
-    background: #ffffff;
-    padding: 32px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    max-width: 440px;
+    margin: 60px auto;
+    background: #fff;
+    padding: 34px;
+    border-radius: 18px;
+    border-top: 6px solid var(--violeta);
+    box-shadow: 0 10px 30px rgba(108, 77, 246, 0.15);
 }
 
 .contenedor-ancho {
-    max-width: 900px;
-    margin: 40px auto;
-    background: #ffffff;
+    max-width: 960px;
+    margin: 32px auto;
+    background: #fff;
     padding: 32px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    border-radius: 18px;
+    border-top: 6px solid var(--turquesa);
+    box-shadow: 0 10px 30px rgba(108, 77, 246, 0.12);
 }
 
-h1, h2 {
-    color: #1a3c6e;
-}
+h1, h2 { color: var(--violeta); margin-top: 0; }
+h2 { color: var(--oscuro); }
 
+.logo-centrado { display: block; width: 72px; height: 72px; margin: 0 auto 8px; }
+.subtitulo { color: var(--gris); margin-top: 0; }
+
+/* ---------- Formularios ---------- */
 label {
     display: block;
     margin-top: 14px;
     font-weight: 600;
     font-size: 14px;
+    color: var(--oscuro);
 }
 
 input, select {
     width: 100%;
-    padding: 8px;
+    padding: 10px 12px;
     margin-top: 4px;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border: 2px solid var(--borde);
+    border-radius: 10px;
+    font-size: 14px;
+    background: #fbfaff;
+    transition: border-color .15s, box-shadow .15s;
+}
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--violeta);
+    box-shadow: 0 0 0 3px rgba(108, 77, 246, 0.18);
 }
 
+/* ---------- Botones ---------- */
 button {
-    margin-top: 20px;
-    width: 100%;
-    padding: 10px;
-    background-color: #1a3c6e;
-    color: white;
+    margin-top: 16px;
+    padding: 10px 20px;
+    background: linear-gradient(90deg, var(--violeta), #8b6bff);
+    color: #fff;
     border: none;
-    border-radius: 4px;
+    border-radius: 10px;
     cursor: pointer;
     font-size: 15px;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(108, 77, 246, 0.3);
+    transition: transform .1s, box-shadow .1s;
 }
+button:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(108, 77, 246, 0.4); }
+.btn-block { width: 100%; }
 
-button:hover {
-    background-color: #14305a;
+.boton-peligro {
+    background: linear-gradient(90deg, #e63950, var(--coral));
+    box-shadow: 0 4px 10px rgba(230, 57, 80, 0.3);
 }
+.boton-peligro:hover { box-shadow: 0 6px 14px rgba(230, 57, 80, 0.4); }
 
-.error {
-    color: #b00020;
-    font-size: 13px;
-    margin-top: 4px;
-}
+td button { margin-top: 0; padding: 6px 14px; font-size: 13px; }
+
+/* ---------- Mensajes ---------- */
+.error { color: #d6204a; font-size: 13px; margin-top: 4px; }
 
 .mensaje-exito {
-    background-color: #e6f4ea;
-    color: #1e7e34;
-    padding: 10px;
-    border-radius: 4px;
+    background-color: #dcf7f3;
+    color: #007f74;
+    border-left: 5px solid var(--turquesa);
+    padding: 10px 14px;
+    border-radius: 8px;
     margin-bottom: 14px;
 }
 
 .mensaje-error {
-    background-color: #fdecea;
-    color: #b00020;
-    padding: 10px;
-    border-radius: 4px;
+    background-color: #ffe9e4;
+    color: #c0392b;
+    border-left: 5px solid var(--coral);
+    padding: 10px 14px;
+    border-radius: 8px;
     margin-bottom: 14px;
 }
 
+/* ---------- Tablas ---------- */
 table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     margin-top: 20px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--borde);
 }
-
 th, td {
     text-align: left;
-    padding: 10px;
-    border-bottom: 1px solid #e0e0e0;
+    padding: 12px;
+    border-bottom: 1px solid #efecfb;
     font-size: 14px;
 }
-
 th {
-    background-color: #1a3c6e;
-    color: white;
-}
-
-.enlace {
-    display: block;
-    margin-top: 16px;
-    text-align: center;
-    color: #1a3c6e;
-    text-decoration: none;
-    font-size: 14px;
-}
-
-/* --- Estilos del modulo de facturacion --- */
-
-/* Insignias de estado de la factura (PAGADA / ANULADA) */
-.badge {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 12px;
+    background: linear-gradient(90deg, var(--violeta), var(--turquesa));
+    color: #fff;
     font-weight: 600;
 }
+tbody tr:nth-child(even) { background: #faf9ff; }
+tbody tr:hover { background: #efeaff; }
 
-.badge-exito {
-    background-color: #e6f4ea;
-    color: #1e7e34;
+.enlace {
+    display: inline-block;
+    margin-top: 12px;
+    color: var(--violeta);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+}
+.enlace:hover { color: var(--turquesa); }
+.contenedor .enlace { display: block; text-align: center; }
+
+/* ---------- Login con ilustracion ---------- */
+.login-layout {
+    display: flex;
+    max-width: 920px;
+    margin: 50px auto;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 16px 40px rgba(108, 77, 246, 0.25);
+    background: #fff;
+}
+.login-hero {
+    flex: 1.1;
+    background: url('/img/login-hero.svg') center / cover no-repeat;
+    min-height: 420px;
+    display: flex;
+    align-items: flex-end;
+    padding: 28px;
+    color: #fff;
+}
+.login-hero h2 { color: #fff; margin: 0 0 4px; font-size: 26px; text-shadow: 0 2px 8px rgba(0,0,0,.25); }
+.login-hero p { margin: 0; text-shadow: 0 2px 8px rgba(0,0,0,.25); }
+.login-form { flex: 1; padding: 40px 36px; }
+.login-form h1 { margin-bottom: 0; }
+
+/* ---------- Tarjetas del panel principal ---------- */
+.saludo {
+    background: linear-gradient(120deg, var(--violeta), var(--turquesa));
+    color: #fff;
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+}
+.saludo h1 { color: #fff; margin: 0 0 6px; }
+.saludo p { margin: 0; }
+.etiqueta-rol {
+    display: inline-block;
+    background: var(--amarillo);
+    color: var(--oscuro);
+    font-weight: 700;
+    font-size: 12px;
+    padding: 3px 12px;
+    border-radius: 20px;
 }
 
-.badge-anulada {
-    background-color: #fdecea;
-    color: #b00020;
+.tarjetas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 20px;
 }
+.tarjeta {
+    background: #fff;
+    border: 2px solid var(--borde);
+    border-radius: 16px;
+    padding: 22px;
+    text-align: center;
+    text-decoration: none;
+    color: var(--oscuro);
+    transition: transform .15s, box-shadow .15s, border-color .15s;
+}
+a.tarjeta:hover {
+    transform: translateY(-4px);
+    border-color: var(--violeta);
+    box-shadow: 0 10px 24px rgba(108, 77, 246, 0.22);
+}
+.tarjeta img { width: 84px; height: 84px; margin-bottom: 10px; }
+.tarjeta h3 { margin: 6px 0 4px; }
+.tarjeta p { margin: 0; color: var(--gris); font-size: 13px; }
+.tarjeta-pronto { opacity: .65; border-style: dashed; }
+
+/* ---------- Facturacion ---------- */
+.badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+}
+.badge-exito { background-color: #dcf7f3; color: #007f74; }
+.badge-anulada { background-color: #ffe9e4; color: #c0392b; }
+.badge-pronto { background-color: #fff3d6; color: #9a6a00; }
 
 .resumen-factura {
     margin-top: 16px;
-    padding: 16px;
-    background-color: #f4f6f8;
-    border-radius: 6px;
+    padding: 16px 20px;
+    background: linear-gradient(120deg, #f3f1ff, #e6fbf8);
+    border-radius: 12px;
     text-align: right;
+    border: 1px solid var(--borde);
+}
+.resumen-factura p { margin: 4px 0; }
+
+@media (max-width: 720px) {
+    .login-layout { flex-direction: column; margin: 20px 12px; }
+    .login-hero { min-height: 180px; }
 }
 
-.resumen-factura p {
-    margin: 4px 0;
-}
-
-.boton-peligro {
-    background-color: #b00020;
-}
-
-.boton-peligro:hover {
-    background-color: #8a0018;
-}
-
-/* Oculta botones y enlaces de accion al imprimir el comprobante de factura */
+/* Oculta botones, enlaces y la cabecera al imprimir el comprobante */
 @media print {
-    .no-imprimir {
-        display: none;
-    }
+    .no-imprimir, .cabecera { display: none; }
+    body { background: #fff; }
 }
+
+/* ---------- Inventario (acciones dentro de la tabla) ---------- */
+td .enlace { margin-top: 0; margin-right: 10px; }
+td form { display: inline; }
+
+/* ---------- Factura electronica (QR y CUFE) ---------- */
+.factura-electronica { display: flex; gap: 16px; align-items: center; margin: 24px 0; }
+.factura-electronica img { width: 130px; height: 130px; }
+.cufe { font-family: monospace; font-size: 11px; word-break: break-all; }

@@ -2,12 +2,14 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>DigiStock - Registro de usuario</title>
     <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
 <body>
     <div class="contenedor">
-        <h1>Crear cuenta</h1>
+        <img class="logo-centrado" th:src="@{/img/logo.svg}" alt="Logo DigiStock">
+        <h1 style="text-align:center;">Crear cuenta</h1>
 
         <div class="mensaje-error" th:if="${errorNegocio}" th:text="${errorNegocio}"></div>
 
@@ -36,7 +38,7 @@
             </select>
             <div class="error" th:if="${#fields.hasErrors('rol')}" th:errors="*{rol}"></div>
 
-            <button type="submit">Registrarme</button>
+            <button type="submit" class="btn-block">Registrarme</button>
         </form>
 
         <a class="enlace" th:href="@{/login}">Ya tengo una cuenta</a>

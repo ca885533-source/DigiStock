@@ -2,25 +2,42 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>DigiStock - Panel principal</title>
     <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
 <body>
-    <div class="contenedor-ancho">
-        <h1>Bienvenido, <span th:text="${usuario.nombreCompleto}"></span></h1>
-        <p>Rol: <strong th:text="${usuario.rol}"></strong></p>
+    <div th:replace="~{fragments/cabecera :: cabecera}"></div>
 
-        <ul>
-            <li><a th:href="@{/facturas}">Modulo de facturacion</a></li>
-            <li><a th:href="@{/productos}">Modulo de inventario</a></li>
-            <!-- Este enlace solo se muestra si el usuario autenticado es ADMINISTRADOR -->
-            <li sec:authorize="hasRole('ADMINISTRADOR')">
-                <a th:href="@{/usuarios}">Gestionar usuarios</a>
-            </li>
-        </ul>
+    <div class="contenedor-ancho">
+        <div class="saludo">
+            <h1>Bienvenido, <span th:text="${usuario.nombreCompleto}"></span></h1>
+            <p>Tu rol: <span class="etiqueta-rol" th:text="${usuario.rol}"></span></p>
+        </div>
+
+        <div class="tarjetas">
+            <a class="tarjeta" th:href="@{/facturas}">
+                <img th:src="@{/img/icono-facturacion.svg}" alt="Facturacion">
+                <h3>Facturacion</h3>
+                <p>Registra ventas y consulta el historial</p>
+            </a>
+
+            <a class="tarjeta" th:href="@{/productos}">
+                <img th:src="@{/img/icono-inventario.svg}" alt="Inventario">
+                <h3>Inventario</h3>
+                <p>Consulta el stock y administra productos</p>
+            </a>
+
+            <!-- Esta tarjeta solo se muestra si el usuario autenticado es ADMINISTRADOR -->
+            <a class="tarjeta" sec:authorize="hasRole('ADMINISTRADOR')" th:href="@{/usuarios}">
+                <img th:src="@{/img/icono-usuarios.svg}" alt="Usuarios">
+                <h3>Usuarios</h3>
+                <p>Activa o desactiva cuentas</p>
+            </a>
+        </div>
 
         <form th:action="@{/logout}" method="post">
-            <button type="submit">Cerrar sesion</button>
+            <button type="submit" class="boton-peligro">Cerrar sesion</button>
         </form>
     </div>
 </body>

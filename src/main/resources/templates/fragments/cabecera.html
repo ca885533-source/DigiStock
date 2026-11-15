@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+    <!-- Cabecera comun a todas las pantallas internas (logo + acceso al panel) -->
+    <header class="cabecera no-imprimir" th:fragment="cabecera">
+        <a class="marca" th:href="@{/dashboard}">
+            <img th:src="@{/img/logo.svg}" alt="Logo DigiStock">
+            DigiStock
+        </a>
+        <nav class="navegacion">
+            <a th:href="@{/dashboard}">Panel</a>
+            <a sec:authorize="hasAnyRole('ADMINISTRADOR','VENDEDOR')" th:href="@{/facturas}">Facturas</a>
+            <a th:href="@{/productos}">Inventario</a>
+        </nav>
+    </header>
+</body>
+</html>

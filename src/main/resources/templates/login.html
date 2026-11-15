@@ -2,36 +2,48 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>DigiStock - Iniciar sesion</title>
     <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
 <body>
-    <div class="contenedor">
-        <h1>DigiStock</h1>
-        <p>Sistema de facturacion e inventario</p>
-
-        <!-- Mensajes de estado segun parametros de la URL -->
-        <div class="mensaje-error" th:if="${param.error}">
-            Usuario o contrasena incorrectos.
-        </div>
-        <div class="mensaje-exito" th:if="${param.registrado}">
-            Cuenta creada correctamente. Ya puedes iniciar sesion.
-        </div>
-        <div class="mensaje-exito" th:if="${param.logout}">
-            Sesion cerrada correctamente.
+    <div class="login-layout">
+        <!-- Lado izquierdo: ilustracion de inventario y facturacion -->
+        <div class="login-hero">
+            <div>
+                <h2>Controla tu inventario</h2>
+                <p>Factura rapido y vende con seguridad.</p>
+            </div>
         </div>
 
-        <form th:action="@{/login}" method="post">
-            <label for="username">Usuario</label>
-            <input type="text" id="username" name="username" required maxlength="20"/>
+        <div class="login-form">
+            <img class="logo-centrado" th:src="@{/img/logo.svg}" alt="Logo DigiStock">
+            <h1 style="text-align:center;">DigiStock</h1>
+            <p class="subtitulo" style="text-align:center;">Sistema de facturacion e inventario</p>
 
-            <label for="password">Contrasena</label>
-            <input type="password" id="password" name="password" required maxlength="30"/>
+            <!-- Mensajes de estado segun parametros de la URL -->
+            <div class="mensaje-error" th:if="${param.error}">
+                Usuario o contrasena incorrectos.
+            </div>
+            <div class="mensaje-exito" th:if="${param.registrado}">
+                Cuenta creada correctamente. Ya puedes iniciar sesion.
+            </div>
+            <div class="mensaje-exito" th:if="${param.logout}">
+                Sesion cerrada correctamente.
+            </div>
 
-            <button type="submit">Ingresar</button>
-        </form>
+            <form th:action="@{/login}" method="post">
+                <label for="username">Usuario</label>
+                <input type="text" id="username" name="username" required maxlength="20"/>
 
-        <a class="enlace" th:href="@{/registro}">¿No tienes cuenta? Registrate aqui</a>
+                <label for="password">Contrasena</label>
+                <input type="password" id="password" name="password" required maxlength="30"/>
+
+                <button type="submit" class="btn-block">Ingresar</button>
+            </form>
+
+            <a class="enlace" style="display:block;text-align:center;" th:href="@{/registro}">¿No tienes cuenta? Registrate aqui</a>
+        </div>
     </div>
 </body>
 </html>

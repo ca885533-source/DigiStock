@@ -2,17 +2,20 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title th:text="${esNuevo} ? 'DigiStock - Nuevo producto' : 'DigiStock - Editar producto'"></title>
     <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
 <body>
+    <div th:replace="~{fragments/cabecera :: cabecera}"></div>
+
     <div class="contenedor-ancho">
         <h1 th:text="${esNuevo} ? 'Nuevo producto' : 'Editar producto'"></h1>
         <a class="enlace" th:href="@{/productos}">&larr; Volver al inventario</a>
 
         <!-- La misma accion sirve para crear (POST /productos) y para editar
              (POST /productos/{id}), segun el valor de esNuevo -->
-        <form th:action="${esNuevo} ? @{/productos} : @{'/productos/' + ${producto.id}}"
+        <form th:action="${esNuevo} ? @{/productos} : @{'/productos/' + ${productoId}}"
               th:object="${producto}" method="post">
 
             <label for="nombre">Nombre del producto</label>

@@ -2,10 +2,13 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>DigiStock - Facturas</title>
     <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
 <body>
+    <div th:replace="~{fragments/cabecera :: cabecera}"></div>
+
     <div class="contenedor-ancho">
         <h1>Facturacion</h1>
         <a class="enlace" th:href="@{/dashboard}">&larr; Volver al panel</a>
