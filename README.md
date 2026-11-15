@@ -229,41 +229,70 @@ y API REST.
 
 ## Evidencia GA7-220501096-AA5-EV03 — Servicios web (API REST)
 
-Además de la interfaz web, DigiStock expone una API REST (JSON) para autenticación, inventario y facturación. La documentación completa de cada servicio (campos, validaciones, ejemplos y respuestas) está en `docs/Documentacion_Servicios_API_DigiStock.pdf`.
-
-**URL base:** `http://localhost:8080` · **Formato:** `application/json` · **Seguridad:** las rutas `/api/**` son públicas (pensadas para pruebas con Postman); las contraseñas se guardan cifradas con BCrypt.
+**URL base:** `http://localhost:8080` · **Formato:** `application/json` · **Seguridad:** todas las rutas
+`/api/**`, excepto `POST /api/auth/login`, usan **HTTP Basic** (`Authorization: Basic base64(usuario:contraseña)`)
+con permisos por rol; la API no crea sesión. Las contraseñas se guardan cifradas con BCrypt.
+Documentación completa en [docs/API.md](docs/API.md) y Swagger UI en `http://localhost:8080/swagger-ui.html`.
 
 ### Servicios
 
-| N.º | Método | Endpoint | Función | Respuestas |
-|---|---|---|---|---|
-| 1 | POST | `/api/auth/registro` | Registrar un usuario | 200, 400 |
-| 2 | POST | `/api/auth/login` | Iniciar sesión | 200, 400 |
-| 3 | GET | `/api/productos` | Listar productos | 200 |
-| 4 | GET | `/api/productos/{id}` | Consultar un producto | 200, 404 |
-| 5 | POST | `/api/productos` | Crear un producto | 201, 400 |
-| 6 | PUT | `/api/productos/{id}` | Actualizar un producto | 200, 400, 404 |
-| 7 | DELETE | `/api/productos/{id}` | Eliminar un producto | 200, 404 |
-| 8 | GET | `/api/facturas` | Listar facturas | 200 |
-| 9 | GET | `/api/facturas/{id}` | Consultar una factura | 200, 404 |
-| 10 | POST | `/api/facturas` | Crear factura (venta con IVA 19 %) | 201, 400 |
-| 11 | POST | `/api/facturas/{id}/anular` | Anular factura y reintegrar stock | 200, 404 |
+| # | Método | Ruta | Descripción | Rol requerido | Códigos |
+|---|--------|------|-------------|---------------|---------|
+| 1 | POST | `/api/auth/login` | Verificar usuario y contraseña | Público | 200, 400, 401 |
+| 2 | POST | `/api/auth/registro` | Registrar un usuario | ADMINISTRADOR | 201, 400 |
+| 3 | GET | `/api/usuarios` | Listar usuarios | ADMINISTRADOR | 200 |
+| 4 | GET | `/api/usuarios/{id}` | Consultar un usuario | ADMINISTRADOR | 200, 404 |
+| 5 | PATCH | `/api/usuarios/{id}/estado` | Activar o desactivar una cuenta | ADMINISTRADOR | 200, 404 |
+| 6 | GET | `/api/productos` | Listar productos | Autenticado | 200 |
+| 7 | GET | `/api/productos/{id}` | Consultar un producto | Autenticado | 200, 404 |
+| 8 | POST | `/api/productos` | Crear un producto | ADMINISTRADOR, ALMACENISTA | 201, 400 |
+| 9 | PUT | `/api/productos/{id}` | Actualizar un producto | ADMINISTRADOR, ALMACENISTA | 200, 400, 404 |
+| 10 | PATCH | `/api/productos/{id}/stock` | Entrada (+) o salida (−) de stock | ADMINISTRADOR, ALMACENISTA | 200, 400, 404 |
+| 11 | DELETE | `/api/productos/{id}` | Eliminar un producto | ADMINISTRADOR, ALMACENISTA | 204, 404 |
+| 12 | POST | `/api/facturas` | Crear factura (venta con IVA 19 %) | ADMINISTRADOR, VENDEDOR | 201, 400 |
+| 13 | GET | `/api/facturas` | Listar facturas | ADMINISTRADOR, VENDEDOR | 200 |
+| 14 | GET | `/api/facturas/{id}` | Consultar una factura | ADMINISTRADOR, VENDEDOR | 200, 404 |
+| 15 | PATCH | `/api/facturas/{id}/anular` | Anular factura y reintegrar stock | ADMINISTRADOR | 200, 400, 404 |
 
 ### Ejemplo: crear una factura
 
-```http
+```
 POST /api/facturas
-Content-Type: application/json
-
+Authorization: Basic base64(usuario:contraseña)
+```
+```json
 {
-  "nombreCliente": "Carlos Perez",
-  "documentoCliente": "1234567890",
-  "items": [ { "productoId": "<id del producto>", "cantidad": 2 } ]
+  "nombreCliente": "Carlos Ruiz",
+  "documentoCliente": "1098765432",
+  "items": [
+    { "productoId": "66f1d2...", "cantidad": 2 }
+  ]
 }
 ```
-
-Respuesta `201 Created`: la factura con `numeroFactura` (FAC-000001...), `subtotal`, `iva`, `total` y `estado: "PAGADA"`.
+El servidor ignora cualquier precio enviado: lee el precio real de la base de datos, valida el
+stock, calcula subtotal, IVA y total, descuenta el stock y toma el vendedor del usuario autenticado.
 
 ### Pruebas con Postman
 
 Importar `DigiStock_AA5-EV04.postman_collection.json` y ejecutarla con *Run collection*. Cada petición valida el código de estado y el contenido de la respuesta.
+
+---
+
+## Factura electrónica: CUFE, código QR y verificación pública
+
+Cada factura recibe un **CUFE** (Código Único de Factura Electrónica) al crearse, y su
+comprobante muestra un **código QR** que lleva a una página pública de verificación.
+
+- **CUFE:** hash SHA-384 (96 caracteres hexadecimales) calculado con el número de factura,
+  fecha, subtotal, IVA, total, documento del cliente y vendedor (`CufeGenerador`). Cualquier
+  cambio en esos datos produce un código distinto. Es una simulación con fines formativos:
+  en Colombia el CUFE real lo calcula el sistema autorizado por la DIAN.
+- **Código QR:** se genera con ZXing (`QrGenerador`) y se sirve como imagen en
+  `GET /facturas/{id}/qr.png`.
+- **Verificación pública:** `GET /verificar/{cufe}` (sin iniciar sesión) confirma que la
+  factura existe y muestra sus datos principales.
+- Las facturas creadas antes de esta funcionalidad reciben su CUFE al consultarse
+  (`FacturaService.asegurarCufe`).
+
+### Pruebas
+`CufeGeneradorTest`, `AutenticacionServiceTest` y `ProductoServiceTest`.
