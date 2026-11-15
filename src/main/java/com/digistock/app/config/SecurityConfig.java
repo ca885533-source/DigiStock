@@ -34,13 +34,11 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(auth -> auth
                 // Rutas publicas: login, registro y archivos estaticos (css/js)
-                .requestMatchers("/login", "/registro", "/css/**", "/js/**").permitAll()
-                // API REST (evidencia AA5-EV03): publica para poder probarla
-                // desde Postman sin necesitar una sesion de navegador. En un
-                // entorno de produccion real se protegeria con un token
-                // (JWT/OAuth2), pero eso queda fuera del alcance de esta
-                // evidencia formativa.
-                .requestMatchers("/api/**").permitAll()
+                .requestMatchers("/login", "/registro", "/css/**", "/js/**", "/img/**").permitAll()
+                // Documentacion Swagger de la API (la API en si exige credenciales)
+                .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                // Verificacion publica de facturas (la abre quien escanea el QR)
+                .requestMatchers("/verificar/**").permitAll()
                 // Solo el administrador puede gestionar usuarios
                 .requestMatchers("/usuarios/**").hasRole("ADMINISTRADOR")
                 // Facturacion: la usan tanto el administrador como el vendedor
@@ -49,6 +47,9 @@ public class SecurityConfig {
                 // listado (el vendedor necesita ver el inventario), pero solo
                 // ADMINISTRADOR y ALMACENISTA pueden crear, editar o eliminar
                 // productos.
+                // Los formularios de alta y edicion tambien son solo para ellos.
+                .requestMatchers(HttpMethod.GET, "/productos/nuevo", "/productos/*/editar")
+                    .hasAnyRole("ADMINISTRADOR", "ALMACENISTA")
                 .requestMatchers(HttpMethod.GET, "/productos/**")
                     .hasAnyRole("ADMINISTRADOR", "VENDEDOR", "ALMACENISTA")
                 .requestMatchers(HttpMethod.POST, "/productos/**")
@@ -66,14 +67,9 @@ public class SecurityConfig {
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login?logout=true")
                 .permitAll()
-            )
-            // CSRF sigue activo para los formularios web (login, registro,
-            // creacion de usuarios), pero se desactiva unicamente para
-            // "/api/**": una API JSON consumida por Postman u otro cliente
-            // externo no tiene el token CSRF que genera Thymeleaf en sus
-            // formularios, asi que exigirlo bloquearia toda peticion
-            // POST/PUT/DELETE de la API sin aportar proteccion real aqui.
-            .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"));
+            );
+            // Nota: CSRF queda activo (comportamiento por defecto de Spring Security)
+            // para proteger los formularios de login, registro y creacion de usuarios.
 
         return http.build();
     }
