@@ -4,11 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
- * DTO usado por la API REST de autenticacion (POST /api/auth/login).
- *
- * Se recibe el usuario y la contrasena en texto plano desde el cliente
- * (Postman, o cualquier front-end), y se comparan contra el hash
- * guardado en la base de datos usando BCrypt (ver UsuarioService.autenticar).
+ * DTO de entrada del servicio POST /api/auth/login.
+ * Solo lleva las credenciales que el cliente envia en el cuerpo JSON.
  */
 @Data
 public class LoginDTO {
