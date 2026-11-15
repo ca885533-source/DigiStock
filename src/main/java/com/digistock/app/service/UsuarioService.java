@@ -4,6 +4,7 @@ import com.digistock.app.dto.RegistroUsuarioDTO;
 import com.digistock.app.model.Rol;
 import com.digistock.app.model.Usuario;
 import com.digistock.app.repository.UsuarioRepository;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -67,34 +68,26 @@ public class UsuarioService {
         usuarioRepository.save(usuario);
     }
 
+    /** Busca un usuario por id. @throws IllegalArgumentException si no existe */
+    public Usuario buscarPorId(String id) {
+        return usuarioRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+    }
+
     /**
-     * Autentica un usuario para la API REST (usada por AuthRestController).
+     * Verifica usuario y contrasena (servicio POST /api/auth/login).
      *
-     * A diferencia del login por formulario (que lo maneja Spring Security
-     * automaticamente), este metodo se usa cuando el cliente es una API
-     * externa (por ejemplo, probada con Postman) y necesita una respuesta
-     * JSON explicita de exito o error en la autenticacion.
+     * El mensaje es el mismo para usuario inexistente, cuenta desactivada
+     * y contrasena incorrecta, para no revelar cual de los casos ocurrio.
      *
-     * @param nombreUsuario nombre de usuario enviado en la peticion
-     * @param contrasena contrasena en texto plano enviada en la peticion
-     * @return el usuario autenticado, si las credenciales son correctas
-     * @throws IllegalArgumentException si el usuario no existe, esta
-     *         inactivo, o la contrasena no coincide (error de autenticacion)
+     * @throws BadCredentialsException si las credenciales no son validas
      */
     public Usuario autenticar(String nombreUsuario, String contrasena) {
         Usuario usuario = usuarioRepository.findByNombreUsuario(nombreUsuario)
-                .orElseThrow(() -> new IllegalArgumentException("Error en la autenticacion"));
-
-        if (!usuario.isActivo()) {
-            throw new IllegalArgumentException("Error en la autenticacion");
+                .orElseThrow(() -> new BadCredentialsException("Credenciales invalidas"));
+        if (!usuario.isActivo() || !passwordEncoder.matches(contrasena, usuario.getContrasena())) {
+            throw new BadCredentialsException("Credenciales invalidas");
         }
-
-        // Se compara la contrasena en texto plano recibida contra el hash
-        // BCrypt guardado; BCrypt nunca se "desencripta", solo se compara.
-        if (!passwordEncoder.matches(contrasena, usuario.getContrasena())) {
-            throw new IllegalArgumentException("Error en la autenticacion");
-        }
-
         return usuario;
     }
 }
