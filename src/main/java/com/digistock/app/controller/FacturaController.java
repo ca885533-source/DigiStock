@@ -1,10 +1,13 @@
 package com.digistock.app.controller;
 
 import com.digistock.app.dto.FacturaDTO;
+import com.digistock.app.model.Factura;
 import com.digistock.app.repository.ProductoRepository;
 import com.digistock.app.security.UsuarioPrincipal;
 import com.digistock.app.service.FacturaService;
+import com.digistock.app.service.QrGenerador;
 import jakarta.validation.Valid;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +16,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
  * Controlador del modulo de facturacion: listar ventas, crear una nueva
@@ -87,8 +92,24 @@ public class FacturaController {
     /** Muestra el detalle de una factura ya generada (vista tipo comprobante). */
     @GetMapping("/facturas/{id}")
     public String verDetalle(@PathVariable String id, Model model) {
-        model.addAttribute("factura", facturaService.buscarPorId(id));
+        model.addAttribute("factura", facturaService.asegurarCufe(facturaService.buscarPorId(id)));
         return "factura-detalle";
+    }
+
+    /**
+     * Imagen PNG del codigo QR de la factura. El QR contiene la direccion de
+     * la pagina publica /verificar/{cufe}, donde cualquiera puede comprobar
+     * que la factura existe y cual es su estado.
+     */
+    @GetMapping(value = "/facturas/{id}/qr.png", produces = MediaType.IMAGE_PNG_VALUE)
+    @ResponseBody
+    public byte[] qr(@PathVariable String id) {
+        Factura factura = facturaService.asegurarCufe(facturaService.buscarPorId(id));
+        String urlVerificacion = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/verificar/{cufe}")
+                .buildAndExpand(factura.getCufe())
+                .toUriString();
+        return QrGenerador.png(urlVerificacion, 260);
     }
 
     /** Anula una factura y reintegra el stock de sus items al inventario. */

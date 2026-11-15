@@ -2,10 +2,13 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>DigiStock - Factura <span th:text="${factura.numeroFactura}"></span></title>
     <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
 <body>
+    <div th:replace="~{fragments/cabecera :: cabecera}"></div>
+
     <div class="contenedor-ancho" id="comprobante">
         <a class="enlace no-imprimir" th:href="@{/facturas}">&larr; Volver a facturas</a>
 
@@ -41,6 +44,15 @@
             <p>Subtotal: <span th:text="${'$' + #numbers.formatDecimal(factura.subtotal, 0, 'POINT', 0, 'COMMA')}"></span></p>
             <p>IVA (19%): <span th:text="${'$' + #numbers.formatDecimal(factura.iva, 0, 'POINT', 0, 'COMMA')}"></span></p>
             <p><strong>Total: <span th:text="${'$' + #numbers.formatDecimal(factura.total, 0, 'POINT', 0, 'COMMA')}"></span></strong></p>
+        </div>
+
+        <!-- Factura electronica: QR de verificacion + CUFE -->
+        <div class="factura-electronica">
+            <img th:src="@{'/facturas/' + ${factura.id} + '/qr.png'}" alt="Codigo QR de verificacion">
+            <div>
+                <p><strong>Verifique esta factura escaneando el codigo QR.</strong></p>
+                <p class="cufe"><strong>CUFE:</strong> <span th:text="${factura.cufe}"></span></p>
+            </div>
         </div>
 
         <div class="no-imprimir">

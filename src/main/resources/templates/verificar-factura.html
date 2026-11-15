@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DigiStock - Verificacion de factura</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <!-- Pagina publica: no usa la cabecera comun porque no hay sesion iniciada -->
+    <header class="cabecera">
+        <span class="marca">
+            <img th:src="@{/img/logo.svg}" alt="Logo DigiStock">
+            DigiStock
+        </span>
+    </header>
+
+    <div class="contenedor-ancho">
+        <h1>Verificacion de factura</h1>
+
+        <!-- Factura encontrada -->
+        <div th:if="${valida}">
+            <span th:class="${factura.estado.name() == 'PAGADA'} ? 'badge badge-exito' : 'badge badge-anulada'"
+                  th:text="${factura.estado.name() == 'PAGADA'} ? 'Factura valida' : 'Factura valida, pero ANULADA'"></span>
+
+            <p><strong>Numero:</strong> <span th:text="${factura.numeroFactura}"></span></p>
+            <p><strong>Fecha:</strong> <span th:text="${#temporals.format(factura.fecha, 'dd/MM/yyyy HH:mm')}"></span></p>
+            <p><strong>Cliente:</strong> <span th:text="${factura.nombreCliente}"></span></p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio unitario</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="item : ${factura.items}">
+                        <td th:text="${item.nombreProducto}"></td>
+                        <td th:text="${item.cantidad}"></td>
+                        <td th:text="${'$' + #numbers.formatDecimal(item.precioUnitario, 0, 'POINT', 0, 'COMMA')}"></td>
+                        <td th:text="${'$' + #numbers.formatDecimal(item.subtotal, 0, 'POINT', 0, 'COMMA')}"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="resumen-factura">
+                <p>Subtotal: <span th:text="${'$' + #numbers.formatDecimal(factura.subtotal, 0, 'POINT', 0, 'COMMA')}"></span></p>
+                <p>IVA (19%): <span th:text="${'$' + #numbers.formatDecimal(factura.iva, 0, 'POINT', 0, 'COMMA')}"></span></p>
+                <p><strong>Total: <span th:text="${'$' + #numbers.formatDecimal(factura.total, 0, 'POINT', 0, 'COMMA')}"></span></strong></p>
+            </div>
+            <p class="cufe"><strong>CUFE:</strong> <span th:text="${factura.cufe}"></span></p>
+        </div>
+
+        <!-- Codigo no encontrado -->
+        <div th:unless="${valida}">
+            <span class="badge badge-anulada">Factura no encontrada</span>
+            <p>El codigo consultado no corresponde a ninguna factura emitida por DigiStock.</p>
+            <p class="cufe" th:text="${cufe}"></p>
+        </div>
+    </div>
+</body>
+</html>
