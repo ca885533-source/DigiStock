@@ -222,7 +222,7 @@ y API REST.
 - Permisos por rol: ver productos lo pueden hacer `ADMINISTRADOR`, `VENDEDOR`
   y `ALMACENISTA`; crear, editar y eliminar, solo `ADMINISTRADOR` y `ALMACENISTA`.
 - El stock se descuenta al facturar y se reintegra al anular una factura.
-- La versión API de este módulo está en los servicios 3 a 7 de la sección siguiente.
+- La versión API de este módulo está en los servicios 6 a 11 de la sección siguiente.
 
 > Nota: las menciones anteriores a que el inventario "no forma parte de esta
 > evidencia" corresponden a AA3 y AA4; en AA5 el módulo ya está implementado.
